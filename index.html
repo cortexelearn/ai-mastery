@@ -11018,7 +11018,7 @@ function CourseApp() {
       const rawPrefs = localStorage.getItem("course-prefs");
       if (rawPrefs) {
         const prefs = JSON.parse(rawPrefs);
-        if (prefs.currentTrack === "ai" || prefs.currentTrack === "mba" || prefs.currentTrack === "am" || prefs.currentTrack === "motor" || prefs.currentTrack === "embed" || prefs.currentTrack === "copilot" || prefs.currentTrack === "agentic") {
+        if (false) { /* standalone AI build: ignore saved track, always stay on "ai" */
           setCurrentTrack(prefs.currentTrack);
         }
         if (typeof prefs.sidebarCollapsed === "boolean") {
