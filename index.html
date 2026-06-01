@@ -2609,9 +2609,18 @@ function buildExamAttempt(pool) {
   const EXAM_SIZE = 25;
   const phases = ["P1", "P2", "P3", "P4"];
 
+  // Normalize phase across both pool schemas:
+  //  - older schema uses string phases ("P1".."P4")
+  //  - newer schema uses numeric phases (1..4)
+  const normPhase = (ph) => {
+    if (typeof ph === "number") return "P" + ph;
+    if (typeof ph === "string") return ph.startsWith("P") ? ph : "P" + ph;
+    return ph;
+  };
+
   // Group pool by phase
   const byPhase = {};
-  phases.forEach(p => { byPhase[p] = pool.filter(q => q.phase === p); });
+  phases.forEach(p => { byPhase[p] = pool.filter(q => normPhase(q.phase) === p); });
 
   // Allocate question count per phase (proportional to pool sizes)
   const totalPool = pool.length;
@@ -11018,7 +11027,7 @@ function CourseApp() {
       const rawPrefs = localStorage.getItem("course-prefs");
       if (rawPrefs) {
         const prefs = JSON.parse(rawPrefs);
-        if (false) { /* standalone AI build: ignore saved track, always stay on "ai" */
+        if (false) { /* standalone build: lock to "ai" */
           setCurrentTrack(prefs.currentTrack);
         }
         if (typeof prefs.sidebarCollapsed === "boolean") {
@@ -11461,6 +11470,22 @@ function CourseApp() {
                   <div style={{ fontFamily: "Georgia, serif", fontSize: 10, fontStyle: "italic", color: "#b5ccdf" }}>learning</div>
                 </div>
               </div>
+              {/* Back to courses — exits the track PWA to the landing page */}
+              <a
+                href="../"
+                style={{
+                  display: "flex", alignItems: "center", gap: 6,
+                  marginTop: 12, padding: "8px 10px",
+                  fontFamily: "monospace", fontSize: 11, letterSpacing: "0.12em",
+                  textTransform: "uppercase", textDecoration: "none",
+                  color: "#b3a292", border: "1px solid rgba(200,75,17,0.28)",
+                  borderRadius: 3, transition: "color .2s, border-color .2s",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.color = "#f5f0e8"; e.currentTarget.style.borderColor = "rgba(200,75,17,0.55)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.color = "#b3a292"; e.currentTarget.style.borderColor = "rgba(200,75,17,0.28)"; }}
+              >
+                <span style={{ fontSize: 13 }}>&#8592;</span> All Courses
+              </a>
             </div>
 
             <div style={{ padding: "12px 18px", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
