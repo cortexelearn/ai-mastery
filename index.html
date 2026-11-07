@@ -151,12 +151,12 @@ const AI_LESSONS = [
     { type: "grid", items: [
       { title: "GPT-4o", text: "~128,000 token context window — roughly 96,000 words or about 320 pages of text." },
       { title: "Claude Sonnet", text: "~200,000 token context window — roughly 150,000 words or about 500 pages." },
-      { title: "Gemini 1.5 Pro", text: "~1,000,000 token context window — roughly 750,000 words, a small library." },
+      { title: "Gemini (long-context)", text: "Up to ~1,000,000 tokens on long-context Gemini models — roughly 750,000 words, a small library. (Gemini 1.5 Pro, which popularized this, was retired in 2025 — check Google's current model list for today's limits.)" },
       { title: "Local Models (Llama)", text: "Typically 8,000-128,000 tokens depending on your hardware configuration." },
     ]},
     { type: "callout", variant: "info", label: "Aerospace Example", text: "A 50-page AS9100 quality manual is roughly 25,000 tokens — easily fits in Claude or GPT-4o's context window. You can paste the whole document and ask specific questions about clauses. We build exactly this in Phase 2." },
     { type: "h3", text: "Idea 2: Prediction, Not Understanding" },
-    { type: "p", text: "LLMs don't understand text the way a human expert does. They predict: given all the text so far, what token is statistically most likely to come next? This process repeats billions of times per second. The result is remarkably human-like text — but it is pattern completion, not genuine comprehension." },
+    { type: "p", text: "LLMs don't understand text the way a human expert does. They predict: given all the text so far, what token is statistically most likely to come next? This process repeats one token at a time — every word of a response is generated this way. The result is remarkably human-like text — but it is pattern completion, not genuine comprehension." },
     { type: "p", text: "This is why LLMs can seem brilliant (they have absorbed enormous amounts of human knowledge) and also confidently wrong. When a model generates a plausible-sounding but incorrect fact, that is called hallucination — and it is a fundamental characteristic of how these systems work, not a temporary bug." },
     { type: "callout", variant: "warning", label: "Critical for Aerospace", text: "LLMs can generate convincing but incorrect specifications, tolerances, material properties, or standards references. An LLM might confidently cite a standard with the wrong requirement. Always verify AI-generated technical claims against authoritative sources. AI drafts — engineers verify." },
     { type: "h3", text: "Idea 3: How Models Get Their Capabilities" },
@@ -167,7 +167,7 @@ const AI_LESSONS = [
       { title: "4. Prompting (Your Tool)", text: "At runtime, you guide behavior through text. No re-training needed. This is 80% of practical AI development work." },
     ]},
     { type: "h3", text: "Temperature — One Key Setting" },
-    { type: "p", text: "Temperature (0 to 1) controls how much randomness the model uses. At 0: always picks the most likely next token — very consistent, somewhat rigid. At 1: samples more randomly — more creative but less predictable. For aerospace technical work (spec analysis, compliance checking), use temperature 0. For drafting proposals or brainstorming, 0.3-0.7 works well." },
+    { type: "p", text: "Temperature (typically 0 to 1) controls how much randomness the model uses when choosing the next token. Lower values make output more consistent; higher values make it more varied and creative. Even at 0, identical outputs are not guaranteed — always verify. Some current APIs no longer accept the setting at all (Anthropic removed temperature, top_p and top_k in API version 2026-10-21), so steer consistency with clear prompts, structured output and validation. Where it is supported, use low values for aerospace technical work (spec analysis, compliance checking) and roughly 0.3-0.7 for drafting proposals or brainstorming." },
   ],
   quizzes: [
     { question: "When an LLM generates a response, what is it actually doing?",
@@ -204,26 +204,26 @@ const AI_LESSONS = [
   title: "The LLM Model Landscape",
   subtitle: "Navigate the major AI models confidently — know which to use when and why.",
   time: "30 min", type: "Reference + Concept",
-  video: { id: "EWvNQjAaOHw", title: "How I Use LLMs — The Full Model Ecosystem: ChatGPT, Claude, Gemini & More (Andrej Karpathy, 2h11m)" },
+  video: { id: "EV7WhVT270Q", title: "State of AI in 2026: LLMs, Coding, Scaling Laws, Agents, GPUs (Lex Fridman Podcast #490, ~4h25m — watch selected excerpts)" },
   content: [
     { type: "p", text: "New AI models launch constantly. Rather than chasing every announcement, you need a stable decision framework. The landscape breaks into three tiers: frontier cloud models, open-source models you can run locally, and specialized models built for specific tasks." },
     { type: "h3", text: "Frontier Cloud Models" },
     { type: "grid", items: [
       { title: "Claude (Anthropic)", text: "Haiku (fast/cheap), Sonnet (balanced), Opus (most capable). Exceptional at long documents, careful reasoning, and complex instructions. Strong safety design — well suited to regulated industries. Best for: document analysis, technical writing, compliance work." },
-      { title: "GPT-4o (OpenAI)", text: "Highly capable and multimodal (text + images + audio). Massive developer ecosystem and integrations. Powers GitHub Copilot. Best for: code generation, general tasks, and analyzing images of parts or drawings." },
-      { title: "Gemini 1.5 Pro (Google)", text: "Industry-leading context window (1M tokens). Deep Google Workspace integration. Best for: very long document analysis, organizations already using Google ecosystem." },
+      { title: "GPT-4o (OpenAI)", text: "Highly capable and multimodal (text + images + audio). Massive developer ecosystem and integrations. OpenAI models are one of several model families available in GitHub Copilot, which is multi-model (OpenAI, Anthropic, Google and others). Best for: code generation, general tasks, and analyzing images of parts or drawings." },
+      { title: "Gemini (Google)", text: "Very large context windows (up to ~1M tokens on long-context models). Deep Google Workspace integration. Best for: very long document analysis, organizations already using Google ecosystem. Note: Gemini 1.5 Pro was retired in 2025 — pick from Google's current model list." },
       { title: "Smaller Models (Haiku, GPT-4o-mini)", text: "Smaller, faster, much cheaper versions of flagship models. 90% of capability at 10% of cost. Best for: high-volume tasks like summarizing many reports, classification, and data extraction." },
     ]},
     { type: "h3", text: "Open-Source and Local Models" },
-    { type: "p", text: "These models run entirely on your own hardware — no internet required, no data leaves your network, no API costs per query. This makes them the only appropriate choice for ITAR-controlled or sensitive proprietary data." },
+    { type: "p", text: "These models run on your own hardware — no internet required once downloaded, and no API costs per query. Running locally takes the third-party cloud provider out of the data path, which reduces risk for sensitive data — but it does not eliminate it. Logs, plugins and extensions, cloud sync and backups, model provenance and who can access the machine still matter, and your organization's policy and ITAR/EAR/CUI rules decide what is allowed — not the deployment type alone." },
     { type: "grid", items: [
-      { title: "Llama 3.2 (Meta)", text: "Best overall open-source model family. 8B parameter version runs on a modern laptop. 70B parameter version needs a workstation with a dedicated GPU. Excellent general capability." },
+      { title: "Llama 3.x (Meta)", text: "Widely used open-weight model family (check the license terms). Llama 3.2 comes in 1B and 3B text models that run on a modern laptop, plus 11B and 90B vision models. The 8B and 70B sizes are Llama 3.1: 8B runs on a well-equipped laptop; 70B needs a workstation with a dedicated GPU." },
       { title: "Mistral 7B", text: "Exceptionally efficient — strong performance for its size. Runs fast on modest hardware. Good for document summarization and classification tasks." },
       { title: "Phi-3 (Microsoft)", text: "Small but surprisingly capable. Designed to run on edge hardware. Good for constrained Windows environments without dedicated GPUs." },
       { title: "How to Run Them", text: "Ollama (ollama.com) is the easiest Windows installer — one command downloads and runs any of these models locally. LM Studio provides a GUI if you prefer no command line." },
     ]},
-    { type: "callout", variant: "warning", label: "The ITAR Decision Rule", text: "If data might be ITAR-controlled or CUI — use a local model only. If data is confidential but not legally controlled — consider a private enterprise cloud API with a Data Processing Agreement. If data is non-sensitive — any cloud API is acceptable. When in doubt, use local. We cover this in detail in Phase 4." },
-    { type: "callout", variant: "success", label: "Quick Decision Guide", text: "Sensitive/ITAR data  →  Local model (Ollama + Llama or Mistral)\nLong document analysis (100+ pages)  →  Claude Sonnet or Gemini\nCode generation  →  GPT-4o or Claude Sonnet\nHigh-volume, cost-sensitive tasks  →  Claude Haiku or GPT-4o-mini\nMaximum reasoning capability  →  Claude Opus or GPT-4o\nOffline or air-gapped environment  →  Ollama + Llama 3.2" },
+    { type: "callout", variant: "warning", label: "The ITAR Decision Rule", text: "If data might be ITAR-controlled or CUI — get your export control officer's decision before using any AI tool. An approved local model is often the most defensible option, but local does not mean automatically compliant. If data is confidential but not legally controlled — consider a private enterprise cloud API with a Data Processing Agreement. If data is non-sensitive — any cloud API is acceptable. When in doubt, do not send it to any AI tool until it has been classified. We cover this in detail in Phase 4." },
+    { type: "callout", variant: "success", label: "Quick Decision Guide", text: "Sensitive/ITAR data  →  Approved local model (Ollama + Llama or Mistral), only after export-control sign-off\nLong document analysis (100+ pages)  →  Claude Sonnet or Gemini\nCode generation  →  GPT-4o or Claude Sonnet\nHigh-volume, cost-sensitive tasks  →  Claude Haiku or GPT-4o-mini\nMaximum reasoning capability  →  Claude Opus or GPT-4o\nOffline or air-gapped environment  →  Ollama + Llama 3.2" },
   ],
   quizzes: [
     { question: "Which statement best describes the current AI model landscape (2025-2026)?",
@@ -238,12 +238,12 @@ const AI_LESSONS = [
     { question: "What's the main advantage of running an LLM locally (like via Ollama)?",
       options: [
         "Local models always produce higher quality outputs than cloud-based commercial models",
-        "Data never leaves your machine, useful for confidential or compliance-sensitive work",
+        "Prompts and documents stay on hardware you control, reducing exposure for confidential or compliance-sensitive work",
         "Running locally is required for ITAR compliance in all defense aerospace environments",
         "Local LLMs are significantly faster than cloud APIs for typical engineering workloads"
       ],
       correct: 1,
-      explanation: "Local models keep data fully on your machine. This matters for ITAR/proprietary content where you can't risk it leaving your environment — though for ITAR specifically, formal authorization (like GCC High for Microsoft tools) is also required. Cloud models are usually higher quality and often faster than local alternatives running on consumer hardware." },
+      explanation: "Local models keep prompts and documents on hardware you control instead of sending them to a cloud provider. That reduces risk for proprietary or controlled content but does not eliminate it — logs, plugins, sync/backups, model provenance and machine access still matter, and for ITAR/CUI your organization's export-control decision governs, not the deployment type. Cloud models are usually higher quality and often faster than local alternatives running on consumer hardware." },
     { question: "What's the trade-off when picking between a large model and a smaller, faster one?",
       options: [
         "Larger models have more capability but cost more and are slower; smaller models are often 'good enough' for many tasks",
@@ -260,7 +260,7 @@ const AI_LESSONS = [
   title: "Windows Dev Setup",
   subtitle: "Get your machine ready to build AI-powered tools. Step-by-step, nothing assumed.",
   time: "45 min", type: "Technical Setup",
-  video: { id: "kqtD5dpn9C8", title: "Python for Beginners — Full Course (Programming with Mosh)" },
+  video: { id: "DXIHeGO-pbI", title: "How to Install VS Code for Python (2026) — Complete Beginner Setup Guide (LenaCurve, ~6 min)" },
   content: [
     { type: "p", text: "This lesson walks through setting up a proper AI development environment on Windows. Follow each step in order. You will be switching between this course and your computer — that is expected and normal." },
     { type: "h3", text: "Step 1 — Install Python 3.11+" },
@@ -275,7 +275,7 @@ const AI_LESSONS = [
     { type: "p", text: "Never hardcode API keys directly in your code. If you share the file or push it to GitHub, your key is exposed. Instead, use a .env file to keep keys separate from code." },
     { type: "callout", variant: "info", label: "Create a file called .env in your project folder", text: "ANTHROPIC_API_KEY=sk-ant-your-key-here\nOPENAI_API_KEY=sk-your-key-here\n\nGet your Anthropic key at: console.anthropic.com\nGet your OpenAI key at: platform.openai.com\n\nAlso create a .gitignore file containing just one line: .env\nThis prevents the key from ever being accidentally shared." },
     { type: "h3", text: "Step 5 — Install Ollama for Local Models" },
-    { type: "p", text: "Ollama lets you run powerful AI models entirely on your Windows machine — no API costs and no data leaving your network. This is essential for any sensitive aerospace data." },
+    { type: "p", text: "Ollama lets you run powerful AI models on your own Windows machine — no API costs, and prompts are processed locally instead of by a cloud provider. That makes it a strong option for sensitive aerospace data, within your organization's rules: check logs, extensions, sync/backup and where the model came from, and get approval before using it with controlled (ITAR/EAR/CUI) data." },
     { type: "callout", variant: "success", label: "Ollama Setup — All Commands", text: "1. Download from ollama.com (Windows installer, one click)\n2. After install, open Command Prompt and run:\n   ollama pull llama3.2\n   (downloads about 2GB — takes a few minutes)\n3. Test it:\n   ollama run llama3.2\n   Type any question and press Enter\n4. Type /bye to exit\n\nYou now have a fully local AI running on your own machine with no ongoing costs." },
     { type: "h3", text: "Common Troubleshooting" },
     { type: "grid", items: [
@@ -324,7 +324,7 @@ const AI_LESSONS = [
   title: "Your First API Call",
   subtitle: "Write real Python code that talks to an AI. Build an aerospace materials assistant.",
   time: "50 min", type: "Hands-On Coding",
-  video: { id: "W68VEFHCsLc", title: "Claude API in Python — Explore AWESOME Use Cases (pixegami, 30 min)" },
+  video: { id: "rccTiDQiQQU", title: "Building with Claude API — Part 1: Tokens (Maria Panneer Rajan, 2026, ~32 min)" },
   content: [
     { type: "p", text: "This is the lesson where theory becomes practice. We go from Python installed to a working AI tool step by step. By the end you will understand the core pattern that everything else in this course builds on." },
     { type: "h3", text: "Your First Script" },
@@ -354,13 +354,13 @@ const AI_LESSONS = [
       explanation: "Environment variables (or a .env file excluded from git) are the standard practice. Hardcoding keys leaks them whenever code is shared; private repos are still risky because access controls change and history persists. Email is exposed in transit and at rest. Always use environment variables and add .env to .gitignore." },
     { question: "What does the 'temperature' parameter control in an LLM API call?",
       options: [
-        "The randomness of the output — higher values produce more varied, creative responses; lower values more deterministic ones",
+        "The randomness of the output — higher values produce more varied, creative responses; lower values more consistent ones",
         "The computational cost of the API call — higher temperature means more expensive responses",
         "The maximum response length, measured in tokens before truncation",
         "Whether the model uses retrieval augmentation to ground responses in source documents"
       ],
       correct: 0,
-      explanation: "Temperature ranges from 0 (deterministic, picks the most likely token every time) to ~1 (more random sampling). For factual queries and structured outputs, use low temperatures. For creative writing or brainstorming, higher temperatures help. It doesn't affect cost, length, or grounding." },
+      explanation: "Temperature typically ranges from 0 (most consistent, though identical outputs are not guaranteed) to ~1 (more random sampling). Some current APIs no longer accept it (Anthropic removed it in API version 2026-10-21). Where supported, use low temperatures for factual queries and structured outputs. For creative writing or brainstorming, higher temperatures help. It doesn't affect cost, length, or grounding." },
     { question: "Why do API responses include a 'usage' field showing token counts?",
       options: [
         "Token counts measure response quality — higher is better and indicates more complete answers",
@@ -377,7 +377,7 @@ const AI_LESSONS = [
   title: "Prompt Engineering",
   subtitle: "Turn vague AI outputs into precise, reliable results using proven techniques.",
   time: "40 min", type: "Core Skill",
-  video: { id: "T9aRN5JkmL8", title: "AI Prompt Engineering: A Deep Dive (Anthropic)" },
+  video: { id: "G2B0YWuJUgI", title: "The Prompting Playbook (Claude, 2026, ~34 min)" },
   content: [
     { type: "p", text: "The difference between a useful AI tool and a frustrating one is usually the quality of the prompt. Prompt engineering is a learnable set of techniques that dramatically improves output quality, consistency, and reliability in production systems." },
     { type: "h3", text: "Technique 1: Specify Format Explicitly" },
@@ -429,7 +429,7 @@ const AI_LESSONS = [
   title: "RAG & Document Q&A",
   subtitle: "Build a system that answers questions about your own internal documents.",
   time: "50 min", type: "Applied Building",
-  video: { id: "T-D1OfcDW1M", title: "What is Retrieval-Augmented Generation (RAG)? (IBM Technology)" },
+  video: { id: "V1lksJ2lyTI", title: "Build a Tiny RAG Pipeline in Python — local Ollama example (EasyHarshMods, ~5 min)" },
   content: [
     { type: "p", text: "RAG — Retrieval-Augmented Generation — is the single most valuable AI capability for most aerospace manufacturers. It lets you ask plain English questions of your own documents: quality manuals, SOPs, supplier records, standards libraries, inspection procedures. No more keyword searching through 500-page PDFs." },
     { type: "h3", text: "How RAG Works — Step by Step" },
@@ -439,9 +439,9 @@ const AI_LESSONS = [
       { title: "3. Store in Vector DB", text: "Save all vectors in a searchable database. ChromaDB is free, runs locally on Windows, and requires nothing beyond pip install." },
       { title: "4. Query at Runtime", text: "Convert the user's question to a vector, find the 3-5 most similar document chunks, and send those chunks plus the question to the LLM." },
     ]},
-    { type: "callout", variant: "success", label: "Install Everything You Need", text: "pip install chromadb sentence-transformers pypdf2 langchain\n\nAll of these run locally — no cloud service, no data leaves your machine.\nchromadb: local vector database\nsentence-transformers: creates embeddings locally (no API key needed)\npypdf2: extracts text from PDF files\nlangchain: simplifies the RAG pipeline code" },
+    { type: "callout", variant: "success", label: "Install Everything You Need", text: "pip install chromadb sentence-transformers pypdf2 langchain\n\nThese libraries run locally — chunking, embeddings and the vector database stay on your machine.\nNOTE: step 4 of the pattern below calls the Claude API, which sends your question AND the retrieved excerpts to Anthropic's cloud. For a fully local pipeline, replace that call with a local model (e.g., Ollama).\nchromadb: local vector database\nsentence-transformers: creates embeddings locally (no API key needed)\npypdf2: extracts text from PDF files\nlangchain: simplifies the RAG pipeline code" },
     { type: "h3", text: "The Core RAG Pattern" },
-    { type: "callout", variant: "info", label: "How the code flows (pseudocode):", text: "# 1. Load and chunk your document\nchunks = load_and_split_pdf('quality_manual.pdf')\n\n# 2. Create embeddings and store in ChromaDB\nvectordb = ChromaDB()\nvectordb.add(chunks, embeddings=local_embedding_model)\n\n# 3. At query time:\nquestion = 'What is our procedure for handling non-conforming material?'\nrelevant_chunks = vectordb.similarity_search(question, k=3)\n\n# 4. Send to LLM with context\nresponse = claude.messages.create(\n    system='Answer based only on the provided document excerpts. Cite the section you are drawing from.',\n    messages=[{'role': 'user', \n               'content': f'Context from manual:\\n{relevant_chunks}\\n\\nQuestion: {question}'}]\n)" },
+    { type: "callout", variant: "info", label: "How the code flows (pseudocode — step 4 is a CLOUD call):", text: "# 1. Load and chunk your document\nchunks = load_and_split_pdf('quality_manual.pdf')\n\n# 2. Create embeddings and store in ChromaDB\nvectordb = ChromaDB()\nvectordb.add(chunks, embeddings=local_embedding_model)\n\n# 3. At query time:\nquestion = 'What is our procedure for handling non-conforming material?'\nrelevant_chunks = vectordb.similarity_search(question, k=3)\n\n# 4. Send to LLM with context\n#    CLOUD STEP: this sends the question and retrieved excerpts to\n#    Anthropic's API. Use only data approved for cloud processing,\n#    or swap in a local model call (e.g., Ollama) for internal documents.\nresponse = claude.messages.create(\n    system='Answer based only on the provided document excerpts. Cite the section you are drawing from.',\n    messages=[{'role': 'user', \n               'content': f'Context from manual:\\n{relevant_chunks}\\n\\nQuestion: {question}'}]\n)" },
     { type: "h3", text: "Highest-Value Aerospace RAG Applications" },
     { type: "grid", items: [
       { title: "Quality Manual Q&A", text: "Ask 'What is our NCR disposition procedure?' and get the exact clause and page reference in seconds. Works for AS9100, NADCAP, and customer-specific requirements." },
@@ -449,7 +449,7 @@ const AI_LESSONS = [
       { title: "Supplier Records", text: "Query qualification history, past audit findings, and approval scope across all supplier files without navigating folder structures manually." },
       { title: "Inspection Procedures", text: "Pull the correct inspection procedure for a given part number, material, or process without searching through folder hierarchies." },
     ]},
-    { type: "callout", variant: "warning", label: "Data Security for Aerospace RAG", text: "Use local embeddings (sentence-transformers library) for ANY internal document — quality manuals, supplier records, process specs. Document content is converted to vectors entirely on your machine and never transmitted anywhere externally.\n\nOnly use cloud embedding APIs for publicly available, non-sensitive documents that you have already licensed and published." },
+    { type: "callout", variant: "warning", label: "Data Security for Aerospace RAG", text: "Use local embeddings (sentence-transformers library) for ANY internal document — quality manuals, supplier records, process specs. Document content is converted to vectors on your machine — but local embeddings only keep the indexing step local. Any chunks you retrieve and pass to a cloud LLM (like the Claude call above) ARE sent to that provider. For internal or controlled documents, use a local model for generation too, or confirm the data is approved for that cloud service.\n\nOnly use cloud embedding APIs for publicly available, non-sensitive documents that you have already licensed and published." },
   ],
   quizzes: [
     { question: "What does RAG (Retrieval-Augmented Generation) solve?",
@@ -488,7 +488,7 @@ const AI_LESSONS = [
   title: "Building Windows Applications",
   subtitle: "Turn Python scripts into real tools your colleagues can actually use.",
   time: "45 min", type: "Applied Building",
-  video: { id: "2siBrMsqF44", title: "Build a Python Website in 15 Minutes with Streamlit (Tech With Tim)" },
+  video: { id: "pAPEP0j73QE", title: "25+ Streamlit PRO Tips from a Co-founder — Dashboard App (Fanilo Andrianasolo, ~8 min)" },
   content: [
     { type: "p", text: "A Python script that only you can run from a terminal has limited value. A properly packaged application that a quality inspector or engineer can open and use immediately transforms how your team works. Three paths from script to deployable Windows tool." },
     { type: "h3", text: "Path 1: Streamlit — Browser App in Minutes" },
@@ -545,7 +545,7 @@ const AI_LESSONS = [
   title: "What Are AI Agents?",
   subtitle: "Understand the shift from single-response AI to systems that plan, act, and iterate.",
   time: "35 min", type: "Core Concept",
-  video: { id: "FwOTs4UxQS4", title: "AI Agents, Clearly Explained (Jeff Su)" },
+  video: { id: "D7_ipDqhtwk", title: "How We Build Effective Agents — Barry Zhang, Anthropic (AI Engineer, ~15 min)" },
   content: [
     { type: "p", text: "Everything we have built so far follows one pattern: send a prompt, get a response. That is powerful but limited to single-step tasks. AI agents unlock multi-step, autonomous workflows where the AI can plan, use tools, check its own work, and iterate — completing complex tasks that would normally require hours of human effort." },
     { type: "h3", text: "The Four Properties of an Agent" },
@@ -559,7 +559,7 @@ const AI_LESSONS = [
     { type: "callout", variant: "info", label: "What the agent does autonomously:", text: "Goal: 'Process this supplier qualification package and recommend an approval decision'\n\nStep 1: read_pdf('supplier_qual_package.pdf')\n        Extracts: company name, certifications, processes, scope\n\nStep 2: query_database('approved_supplier_list', supplier_name)\n        Checks prior history and existing qualification status\n\nStep 3: search_nadcap_scope(supplier_name)\n        Verifies current NADCAP accreditation and commodity scope\n\nStep 4: compare_to_requirements(supplier_data, commodity)\n        Identifies gaps: missing NADCAP for heat treat\n\nStep 5: write_qualification_summary(all_findings)\n        Drafts structured recommendation report\n\n        HUMAN REVIEW CHECKPOINT — engineer reviews and decides" },
     { type: "callout", variant: "warning", label: "Human-in-the-Loop Is Non-Negotiable for Aerospace", text: "Build human review checkpoints into every agentic workflow for: supplier qualification decisions, design disposition, audit findings, any output that affects airworthiness or compliance. The agent drafts and recommends — the engineer approves and takes accountability. This is both good practice and required for AS9100 traceability." },
     { type: "h3", text: "The ReAct Pattern" },
-    { type: "p", text: "The most common agentic architecture is ReAct: Reason, Act, Observe, Repeat. The agent thinks about what to do, does it, observes the result, and repeats until the goal is achieved. This is how Claude Code, GitHub Copilot Workspace, and most production AI agents work internally." },
+    { type: "p", text: "The most common agentic architecture is ReAct: Reason, Act, Observe, Repeat. The agent thinks about what to do, does it, observes the result, and repeats until the goal is achieved. Agentic tools such as Claude Code and GitHub Copilot coding agent follow a similar reason-act-observe loop, though their exact internals are not fully public. (GitHub Copilot Workspace, an earlier preview, was discontinued in favor of Copilot coding agent.)" },
     { type: "grid", items: [
       { title: "Reason", text: "Model thinks: 'I need to find the supplier's NADCAP scope. I will use the search_nadcap tool with their company name as input.'" },
       { title: "Act", text: "Model calls: search_nadcap(company='Precision Heat Treating Inc.')" },
@@ -604,7 +604,7 @@ const AI_LESSONS = [
   title: "Tool Use & Agent Loops",
   subtitle: "Give your AI access to real tools and build your first autonomous workflow.",
   time: "55 min", type: "Hands-On Coding",
-  video: { id: "2HsmNeT8TCg", title: "Claude Function Calling Made Dead Simple (Anthropic Tool Use)" },
+  video: { id: "_HqK7GzrYMo", title: "Building with Claude API — Part 10: Tool Use, Function and Schema (Maria Panneer Rajan, 2026, ~13 min)" },
   content: [
     { type: "p", text: "Claude and GPT-4 support function calling — a way to define tools the model can invoke as it reasons through a problem. You define what tools exist and what they do. The model decides when and how to call them. Your code actually executes them and returns results." },
     { type: "h3", text: "Defining Tools" },
@@ -678,7 +678,7 @@ const AI_LESSONS = [
       { title: "Generator Plus Critic", text: "One agent generates a draft; another critiques it; the generator revises. Loop until the critic approves or a quality threshold is reached." },
     ]},
     { type: "h3", text: "Aerospace Example: Full NCR Processing Pipeline" },
-    { type: "callout", variant: "info", label: "Six-agent NCR processing system:", text: "User uploads NCR document\n        |\n[Extraction Agent]\nPulls: part number, process, dimension, deviation, inspector name\n        |\n[Standards Agent]\nLooks up applicable tolerances and severity per AS9102\n        |\n[History Agent]\nQueries ERP for past NCRs on this part and process combination\n        |\n[Risk Agent]\nScores risk: deviation magnitude times history times downstream impact\n        |\n[Disposition Agent]\nDrafts recommendation: use-as-is, rework, or scrap with rationale\n        |\n[Report Agent]\nAssembles all findings into formatted Word document\n        |\nENGINEER REVIEWS AND APPROVES BEFORE ANY ACTION IS TAKEN" },
+    { type: "callout", variant: "info", label: "Six-agent NCR processing system:", text: "User uploads NCR document\n        |\n[Extraction Agent]\nPulls: part number, process, dimension, deviation, inspector name\n        |\n[Standards Agent]\nLooks up applicable tolerances from the controlling drawing/spec\nand rates severity per your NCR/MRB procedure\n(AS9102 defines FAI documentation, not part tolerances)\n        |\n[History Agent]\nQueries ERP for past NCRs on this part and process combination\n        |\n[Risk Agent]\nScores risk: deviation magnitude times history times downstream impact\n        |\n[Disposition Agent]\nDrafts recommendation: use-as-is, rework, or scrap with rationale\n        |\n[Report Agent]\nAssembles all findings into formatted Word document\n        |\nENGINEER REVIEWS AND APPROVES BEFORE ANY ACTION IS TAKEN" },
     { type: "callout", variant: "warning", label: "Complexity Warning", text: "Multi-agent systems are significantly harder to debug, test, and maintain than single agents. Build and validate each agent individually before connecting them together. A well-tested single agent that works reliably is far more valuable than a complex multi-agent system that fails unpredictably. Add complexity only when the single-agent approach genuinely cannot meet your requirements." },
   ],
   quizzes: [
@@ -727,7 +727,7 @@ const AI_LESSONS = [
       { title: "Computer Vision (Advanced)", text: "Camera-based surface defect detection and dimensional verification. High value but requires specialized CV models and hardware — better as a Phase 2 initiative after LLM tools are established." },
     ]},
     { type: "h3", text: "Domain 2: Compliance and Documentation" },
-    { type: "callout", variant: "success", label: "Highest-ROI Compliance Applications", text: "AS9100/NADCAP clause lookup: 'What does clause 8.5.2 require for production verification?' — instant answer with the clause reference\n\nAudit preparation: AI reviews your QMS documentation against a standard and generates a gap report with specific clause citations\n\nWork instruction drafting: AI generates first-draft SOPs from your process description — engineers refine and approve\n\nTraining materials: AI creates comprehension quizzes and knowledge checks from existing procedure documents\n\nCustomer flow-down analysis: AI reads customer purchase orders and flags all quality requirements needing disposition" },
+    { type: "callout", variant: "success", label: "Highest-ROI Compliance Applications", text: "AS9100/NADCAP clause lookup: 'What does clause 8.5.1.3 require for production process verification?' — instant answer with the clause reference (always confirm against your licensed, controlled copy of the standard)\n\nAudit preparation: AI reviews your QMS documentation against a standard and generates a gap report with specific clause citations\n\nWork instruction drafting: AI generates first-draft SOPs from your process description — engineers refine and approve\n\nTraining materials: AI creates comprehension quizzes and knowledge checks from existing procedure documents\n\nCustomer flow-down analysis: AI reads customer purchase orders and flags all quality requirements needing disposition" },
     { type: "h3", text: "Domain 3: Supply Chain" },
     { type: "grid", items: [
       { title: "Supplier Qualification", text: "As designed throughout Phase 3. AI processes certification packages, checks the ASL, and flags gaps. Reduces qualification review time from days to hours with a documented audit trail." },
@@ -777,7 +777,7 @@ const AI_LESSONS = [
   title: "ITAR, Data Security & Compliance",
   subtitle: "Navigate the regulatory and legal landscape for AI in aerospace manufacturing.",
   time: "35 min", type: "Critical Knowledge",
-  video: { id: "RQ26uWCM5bY", title: "Intro to Export Controls Compliance (ITAR & EAR Webinar)" },
+  video: { id: "bAtDEeEfdrE", title: "AI for NIST, ISO 27001, and CMMC Compliance: Opportunities and Pitfalls (PECB, 2026, ~69 min)" },
   content: [
     { type: "callout", variant: "warning", label: "Not Legal Advice", text: "This lesson provides a practical operational framework based on common industry practices. For your specific situation — especially if you hold ITAR registrations or handle CUI — consult your legal counsel and export control officer before implementing any AI tools that touch controlled data." },
     { type: "h3", text: "Why ITAR and AI Is a Serious Issue" },
@@ -790,7 +790,7 @@ const AI_LESSONS = [
       { title: "Sensitive Commercial", text: "Confidential but not legally controlled: supplier pricing, internal quality metrics, operational data. Generally acceptable via enterprise cloud APIs with Data Processing Agreements." },
       { title: "Non-Sensitive", text: "Published standards you have licensed, generic procedures, public specifications, training materials. Public cloud APIs are acceptable for this category." },
     ]},
-    { type: "callout", variant: "success", label: "Safe Deployment Decision Tree", text: "Is the data ITAR-controlled?\n  YES  -->  Local model only (Ollama on your own hardware)\n\nIs the data CUI or EAR-controlled?\n  YES  -->  Consult export control officer\n            If cleared: Azure OpenAI with signed DPA\n\nIs it proprietary but not legally controlled?\n  YES  -->  Enterprise cloud API with Data Processing Agreement\n            (Azure OpenAI, AWS Bedrock, or Google Vertex AI)\n\nIs it non-sensitive or publicly available?\n  YES  -->  Any cloud API is acceptable\n\nWhen in doubt  -->  Local model. Always safe, never creates compliance risk." },
+    { type: "callout", variant: "success", label: "Safe Deployment Decision Tree", text: "Is the data ITAR-controlled?\n  YES  -->  Stop: get your export control officer's decision first.\n            An approved local model (Ollama on company-controlled hardware)\n            is often the most defensible option, but it still needs\n            access controls, no cloud sync/telemetry, and approval.\n\nIs the data CUI or EAR-controlled?\n  YES  -->  Consult export control officer\n            If cleared: only the specific service/environment your export\n            control and security teams approve (a DPA alone is not enough)\n\nIs it proprietary but not legally controlled?\n  YES  -->  Enterprise cloud API with Data Processing Agreement\n            (Azure OpenAI, AWS Bedrock, or Google Vertex AI)\n\nIs it non-sensitive or publicly available?\n  YES  -->  Any cloud API is acceptable\n\nWhen in doubt  -->  Do not process it with any AI tool until it is classified.\n            Local models reduce risk but never remove it: logs, plugins,\n            sync/backups, model provenance, machine access and your\n            organization's ITAR/EAR/CUI policy still govern." },
     { type: "h3", text: "AS9100 Traceability Requirements for AI" },
     { type: "p", text: "AS9100 Rev D requires traceability in your quality management system. If AI contributes to any quality decision, you must document the AI's role. Build this into every tool from day one — retrofitting traceability is significantly harder than building it in from the start." },
     { type: "callout", variant: "info", label: "Minimum traceability record for each AI-assisted quality action:", text: "Date and time of AI analysis\nAI model used (Claude Sonnet, Llama 3.2, etc.)\nVersion of system prompt or tool version number\nDocument or data analyzed (by reference, not by content)\nAI recommendation or output summary\nName and credentials of the human reviewer\nReviewer's disposition: accepted, modified, or rejected\nFinal action taken and by whom\n\nThis can be as simple as additional columns in your existing NCR tracking spreadsheet." },
@@ -798,13 +798,13 @@ const AI_LESSONS = [
   quizzes: [
     { question: "An aerospace engineer wants to use a cloud-based LLM to help draft a technical report containing ITAR-controlled data. What's the right approach?",
       options: [
-        "Use only a locally-hosted LLM, or a specifically ITAR-authorized environment like GCC High — commercial cloud LLMs are not ITAR-authorized",
+        "Get an export-control decision first, then use only an environment your organization has approved for ITAR data (e.g., an approved local deployment or a configured government cloud) — not a general commercial chatbot",
         "Use ChatGPT or Claude with enterprise data protection — encryption in transit covers ITAR requirements adequately",
         "ITAR is a documentation issue; redacting names and program identifiers before sending the data to the LLM is sufficient",
         "Any cloud LLM is fine as long as the user has US citizenship and signed an ITAR awareness training acknowledgment"
       ],
       correct: 0,
-      explanation: "ITAR-controlled technical data cannot be processed in commercial cloud services regardless of encryption, redaction, or user citizenship. The standard options are: (1) locally-hosted LLMs where data never leaves your machine, or (2) formally authorized environments like Microsoft GCC High where Microsoft commits to ITAR contractual language. Encryption alone doesn't grant ITAR authorization, and partial redaction doesn't change the controlled status of the underlying data." },
+      explanation: "There is no ITAR certification for cloud services (Microsoft states this explicitly), and encryption in transit, redaction, or user citizenship alone do not make a service appropriate. Organizations typically use an approved, access-controlled local deployment or a government cloud environment (e.g., Azure Government or Microsoft 365 GCC High) configured for their ITAR obligations — but your export control officer decides, based on the specific data, contract and service configuration. Even a local deployment needs access controls and approval, and partial redaction doesn't change the controlled status of the underlying data." },
     { question: "What's the difference between ITAR, EAR, and CUI in practical terms for AI use?",
       options: [
         "ITAR (State, defense articles), EAR (Commerce, dual-use), and CUI (agency-specific safeguarding standards) are distinct regimes with different but sometimes overlapping requirements",
@@ -818,11 +818,11 @@ const AI_LESSONS = [
       options: [
         "Always use the most secure environment available — GCC High for everything to avoid edge-case mistakes",
         "Use commercial cloud everywhere — modern encryption and access controls make any environment compliant",
-        "Match the environment to the sensitivity of the data: commercial for non-controlled, GCC for CUI Basic, GCC High for CUI Specified / ITAR / EAR-controlled content",
+        "Classify the data first, then use the environment your export-control and security teams approve for that data, contract and service — commonly commercial for non-controlled work, with GCC / GCC High evaluated for CUI and export-controlled data",
         "Use GCC for all government work and commercial for everything else — environment selection is binary based on customer type"
       ],
       correct: 2,
-      explanation: "Match the environment to the data. Commercial M365 is FedRAMP Moderate and OK for FCI and non-controlled work. GCC is FedRAMP High and covers CUI Basic. GCC High adds DoD IL4 authorization and is the required environment for CUI Specified, ITAR, EAR-controlled CUI, and CMMC L2+ with CUI data. Always-most-secure sounds safe but is expensive and operationally heavy. Always-commercial is non-compliant. Always-GCC misses ITAR. The decision is per-data-class." }
+      explanation: "Match the environment to the data, the contract and the specific service configuration. A common pattern is commercial Microsoft 365 for non-controlled work, with GCC or GCC High for CUI and export-controlled data (Microsoft positions GCC High for many CUI/ITAR scenarios). But data category alone does not determine a universally lawful environment: flow-downs, authorization, service boundary, region and support-personnel access all matter, and there is no ITAR certification for any cloud. Always-most-secure sounds safe but is expensive and operationally heavy. Always-commercial ignores controlled data. A binary customer-type rule misses export controls. The decision is per data class, approved by your compliance team." }
   ]
 },
 {
@@ -830,7 +830,7 @@ const AI_LESSONS = [
   title: "Building the Business Case",
   subtitle: "Turn your technical knowledge into leadership-ready proposals that get approved and funded.",
   time: "45 min", type: "Strategic + Capstone",
-  video: { id: "UQP5MmCAQ3Y", title: "How to Write a Business Case — Project Management Training (ProjectManager)" },
+  video: { id: "MIMUanvjE0s", title: "AI Value at Scale with ZF Group — SAP Sapphire Madrid 2026 (SAP, ~10 min)" },
   content: [
     { type: "p", text: "You have the technical foundation. Now comes the skill that determines whether any of it gets deployed at scale: making the case to leadership in terms they care about — ROI, risk reduction, competitive advantage, and manageable implementation risk." },
     { type: "h3", text: "The ROI Calculation" },
@@ -840,7 +840,7 @@ const AI_LESSONS = [
     { type: "h3", text: "Handling Objections from Leadership" },
     { type: "grid", items: [
       { title: "What if the AI makes a mistake?", text: "Every AI output is reviewed by a qualified engineer before any action is taken. The AI reduces their documentation time — not their accountability or judgment. Our liability exposure is unchanged." },
-      { title: "What about our proprietary data?", text: "We use local models for sensitive technical data — it never leaves our network. I have reviewed this approach with legal and export control. Here is the specific data flow." },
+      { title: "What about our proprietary data?", text: "We use approved local models for sensitive technical data, so it is not sent to a third-party cloud — and the local setup still follows our access-control, logging and export-control rules. I have reviewed this approach with legal and export control. Here is the specific data flow." },
       { title: "Will this eliminate jobs?", text: "This frees engineers from document processing so they can focus on engineering judgment — the work that commands our premium margins. We are not reducing headcount; we are upgrading what our team accomplishes." },
       { title: "We do not have time to implement this.", text: "The 90-day pilot requires X hours of engineering time total. I have scoped it to be completely additive and non-disruptive to current operations. The first tool is ready to pilot this quarter." },
     ]},
@@ -1310,7 +1310,7 @@ const AI_FINAL_EXAM = [
               "AI can make binding airworthiness decisions for derivative configurations of certified designs",
               "AI can replace human reviewers entirely once a model passes a NIST verification benchmark"] },
   { phase: "P4", q: "An engineer wants to use a commercial cloud LLM to help draft a technical report containing ITAR data. What's the right approach?",
-    options: ["Use a locally-hosted LLM, or a formally ITAR-authorized environment like GCC High — commercial clouds are not authorized",
+    options: ["Get an export-control decision first, then use only an environment approved for ITAR data (e.g., an approved local deployment or a configured government cloud) — not a general commercial chatbot",
               "Use any commercial cloud LLM as long as enterprise data protection is enabled and traffic is encrypted",
               "ITAR is a documentation issue; redacting names and program identifiers before sending the data is sufficient",
               "Any cloud LLM is fine provided the user has US citizenship and signed ITAR awareness training"] },
@@ -1360,7 +1360,7 @@ const AI_FINAL_EXAM = [
 
   // Phase 2 — additional Build questions (8 more, total P2 = 14)
   { phase: "P2", q: "What's the impact of 'temperature = 0' on LLM output?",
-    options: ["Makes output more deterministic — same prompt produces the same (or very similar) response",
+    options: ["Makes output more consistent — less variation between runs, though identical responses are not guaranteed",
               "Completely eliminates the possibility of hallucination by forcing only verified outputs",
               "Causes the API to return the response faster by reducing the model's reasoning steps",
               "Disables the model's safety filtering, allowing it to respond to any prompt without restriction"] },
@@ -1433,11 +1433,11 @@ const AI_FINAL_EXAM = [
               "Models refusing to answer technical questions due to overly aggressive safety filtering",
               "Models generating responses in the wrong programming language for the user's project",
               "Models becoming unavailable during peak usage hours due to capacity constraints"] },
-  { phase: "P4", q: "Which environment is required for processing ITAR-controlled technical data with Microsoft AI tools?",
-    options: ["Microsoft GCC High — only environment where Microsoft commits to ITAR contractual language",
-              "Microsoft 365 commercial with enterprise data protection enabled across the tenant",
+  { phase: "P4", q: "What determines whether a Microsoft cloud environment can be used for ITAR-controlled technical data?",
+    options: ["Your organization's export-control assessment of the specific service, configuration, access controls and contract — there is no ITAR certification, and Azure, Azure Government and GCC High offer different commitments",
+              "Microsoft 365 commercial with enterprise data protection enabled — that tenant setting alone makes it ITAR-appropriate",
               "Any cloud environment as long as the user is a US person with active clearance",
-              "Microsoft Azure Government Cloud with standard encryption at rest enabled"] },
+              "Encryption at rest alone — once stored data is encrypted, any Microsoft cloud region is acceptable"] },
   { phase: "P4", q: "What's the right way to estimate AI ROI for an internal pilot?",
     options: ["Quantify time savings on specific recurring tasks × frequency × loaded labor rate, minus license cost",
               "Survey engineers after the pilot to ask whether they liked the tool — adoption rate is the key metric",
@@ -11958,12 +11958,11 @@ class ErrorBoundary extends Component {
     console.error("Course app crashed:", error, info);
   }
   handleReset = () => {
-    // ErrorBoundary doesn't know active track, so wipe all course data to recover cleanly
+    // Standalone AI track: clear only this track's progress. localStorage is
+    // shared across the whole cortexelearn.github.io origin, so sibling tracks'
+    // progress keys and the shared "course-prefs" key are left untouched.
     try {
-      ["ai", "mba", "am", "motor", "embed", "copilot", "agentic"].forEach((t) => {
-        localStorage.removeItem(`${t}-course-progress`);
-      });
-      localStorage.removeItem("course-prefs");
+      localStorage.removeItem("ai-course-progress");
     } catch (e) {}
     window.location.reload();
   };
