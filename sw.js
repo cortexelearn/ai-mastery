@@ -5,7 +5,7 @@
 // cortexelearn.github.io), so this worker only ever manages caches that carry
 // its own prefix.
 const CACHE_PREFIX = 'cortexedge-ai-mastery-';
-const CACHE_NAME = CACHE_PREFIX + 'v8';
+const CACHE_NAME = CACHE_PREFIX + 'v9';
 const PRECACHE_URLS = [
   './',
   './index.html',
