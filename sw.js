@@ -5,13 +5,28 @@
 // cortexelearn.github.io), so this worker only ever manages caches that carry
 // its own prefix.
 const CACHE_PREFIX = 'cortexedge-ai-mastery-';
-const CACHE_NAME = CACHE_PREFIX + 'v9';
+const CACHE_NAME = CACHE_PREFIX + 'v10';
 const PRECACHE_URLS = [
   './',
   './index.html',
   './manifest.json',
   './icons/icon-192.png',
   './icons/icon-512.png',
+  './diagrams/AIM-L01-data-path.png',
+  './diagrams/AIM-L01-lesson-loop.png',
+  './diagrams/AIM-L01-roadmap.png',
+  './diagrams/AIM-L02-capability-layers.png',
+  './diagrams/AIM-L02-temperature.png',
+  './diagrams/AIM-L02-token-loop.png',
+  './diagrams/AIM-L03-deploy-tree.png',
+  './diagrams/AIM-L03-eligibility.png',
+  './diagrams/AIM-L03-landscape.png',
+  './diagrams/AIM-L12-done-looks-like.png',
+  './diagrams/AIM-L12-three-domains.png',
+  './diagrams/AIM-L12-value-readiness.png',
+  './diagrams/AIM-L14-npv-waterfall.png',
+  './diagrams/AIM-L14-objections.png',
+  './diagrams/AIM-L14-one-page.png',
 ];
 
 // CDN assets — cached on first use so the app works offline after initial load

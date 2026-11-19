@@ -1,12 +1,15 @@
-# AI Mastery diagrams (T-034-L, Rev A, DRAFT)
+# AI Mastery diagrams
 
-These SVG and PNG files are staged so they can be served from this repo once
-Forge adds a same-origin image block. They are **not** referenced from the
-lesson `content` arrays yet, because `renderBlock` has no `image` type today
-(an unknown type would silently not paint).
+Diagrams are served from the same origin as the lessons. Reference them in a
+lesson's `content` array using an image block. Alt text is required and PNG is
+preferred.
 
-Do not add a CDN. See `/workspace/ops-team/learning/ai-mastery/README.md` for
-the minimal image-block shape, cache bump, and test notes.
+```js
+{ type: "image", src: "diagrams/AIM-L02-token-loop.png", alt: "Diagram of the token loop.", caption: "Optional caption." }
+```
 
-Generated 2026-11-19 by Sage with `make-diagrams.py`. Illustrative teaching
-figures only. Status: DRAFT.
+Add new diagram files to `PRECACHE_URLS` in `sw.js` and bump `CACHE_NAME`.
+
+Do not add a CDN or remote image host; image `src` must be a relative `diagrams/` path.
+
+Illustrative teaching figures only.

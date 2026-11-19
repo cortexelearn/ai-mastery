@@ -948,6 +948,12 @@ const AI_LESSONS = [
 
 // ─── COMPONENTS ────────────────────────────────────────────────────────────────
 
+function isLocalImageSrc(src) {
+  return typeof src === "string" && !src.includes("..") &&
+    /^(?:\.\/)?diagrams\/[A-Za-z0-9._-]+$/.test(src) &&
+    /\.(?:png|svg|jpe?g|webp)$/i.test(src);
+}
+
 function renderInline(text) {
   if (text == null) return null;
   const parts = String(text).split(/(\*\*[^*]+\*\*|`[^`]+`|\*(?=\S)[^*]*?[^*\s]\*(?![\w*]))/g);
@@ -3843,6 +3849,16 @@ function LessonView({ lesson, lessonIdx, totalLessons, onPrev, onNext, isComplet
       );
       case "code": return <figure key={i} style={{ margin: "16px 0", minWidth: 0 }}>{block.label && <figcaption style={{ fontWeight: 700, marginBottom: 8 }}>{block.label}</figcaption>}<pre style={{ overflowX: "auto", padding: 16, background: "#ede7d6", borderRadius: 8 }}><code style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace" }}>{block.text}</code></pre></figure>;
       case "callout": return <Callout key={i} variant={block.variant} calloutStyle={block.style} label={block.label} text={block.text} isComfortable={isComfortable} />;
+      case "image":
+        if (!isLocalImageSrc(block.src) || typeof block.alt !== "string" || !block.alt.trim()) return null;
+        return (
+          <figure key={i} className="lesson-figure" style={{ margin: "20px 0", minWidth: 0 }}>
+            <img src={block.src} alt={block.alt} loading="lazy" decoding="async" style={{ display: "block", maxWidth: "100%", height: "auto", margin: "0 auto", borderRadius: 6 }} />
+            {typeof block.caption === "string" && block.caption.trim() && (
+              <figcaption style={{ fontSize: 13, color: "#716556", marginTop: 8, textAlign: "center" }}>{block.caption}</figcaption>
+            )}
+          </figure>
+        );
       case "grid": return <ConceptGrid key={i} items={block.items} isComfortable={isComfortable} />;
       case "ul": return (
         <ul key={i} style={{ margin: `0 0 ${pSpacing}px`, paddingLeft: 22, color: "#2a2018", fontSize: pFont }}>
